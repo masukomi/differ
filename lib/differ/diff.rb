@@ -82,6 +82,22 @@ module Differ
       end
     end
 
+    def changes
+      @raw.select { |part| Change === part }
+    end
+
+    def insert_count
+      @raw.count { |part| Change === part && part.insert? }
+    end
+
+    def delete_count
+      @raw.count { |part| Change === part && part.delete? }
+    end
+
+    def change_count
+      @raw.count { |part| Change === part && part.change? }
+    end
+
   protected
     def raw_array
       @raw
