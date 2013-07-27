@@ -6,6 +6,7 @@ require 'differ/format/html'
 
 module Differ
   class << self
+    @@separator = '';
 
     def separator=(separator)
       @@separator = separator
