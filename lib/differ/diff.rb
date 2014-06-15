@@ -76,10 +76,26 @@ module Differ
       @raw.inject('') do |sum, part|
         part = case part
         when String then part
-        when Change then f.format(part)
+        when Change then f.call(part)
         end
         sum << part
       end
+    end
+
+    def changes
+      @raw.select { |part| Change === part }
+    end
+
+    def insert_count
+      @raw.count { |part| Change === part && part.insert? }
+    end
+
+    def delete_count
+      @raw.count { |part| Change === part && part.delete? }
+    end
+
+    def change_count
+      @raw.count { |part| Change === part && part.change? }
     end
 
   protected
@@ -89,7 +105,7 @@ module Differ
 
   private
     def sep
-      "#{$;}"
+      "#{Differ.separator}"
     end
   end
 end
