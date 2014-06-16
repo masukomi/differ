@@ -2,13 +2,13 @@ require 'spec_helper'
 
 describe Differ::Change do
   before(:each) do
-    @format = Module.new { def self.call(c); end }
+    @format = Module.new { def self.call(_c); end }
     Differ.format = @format
   end
 
   describe '(empty)' do
     before(:each) do
-      @change = Differ::Change.new()
+      @change = Differ::Change.new
     end
 
     it 'should have a default insert' do
@@ -27,7 +27,7 @@ describe Differ::Change do
 
   describe '(insert only)' do
     before(:each) do
-      @change = Differ::Change.new(:insert => 'foo')
+      @change = Differ::Change.new(insert: 'foo')
     end
 
     it 'should populate the :insert parameter' do
@@ -43,7 +43,7 @@ describe Differ::Change do
 
   describe '(delete only)' do
     before(:each) do
-      @change = Differ::Change.new(:delete => 'bar')
+      @change = Differ::Change.new(delete: 'bar')
     end
 
     it 'should have a default :insert' do
@@ -59,7 +59,7 @@ describe Differ::Change do
 
   describe '(both insert and delete)' do
     before(:each) do
-      @change = Differ::Change.new(:insert => 'foo', :delete => 'bar')
+      @change = Differ::Change.new(insert: 'foo', delete: 'bar')
     end
 
     it 'should populate the :insert parameter' do

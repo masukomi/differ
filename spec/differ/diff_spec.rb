@@ -30,8 +30,10 @@ describe Differ::Diff do
   describe '#format_as' do
     before(:each) do
       @change = +'b'
-      Differ.format = Module.new { def self.call(c); raise :error; end }
-      @format = Module.new { def self.call(c); end }
+      Differ.format = Module.new { def self.call(_c)
+                                     fail :error
+                                   end }
+      @format = Module.new { def self.call(_c); end }
     end
 
     it 'should delegate change formatting to the given format' do
@@ -41,7 +43,7 @@ describe Differ::Diff do
 
     it 'should use Differ#format_for to grab the correct format' do
       Differ.should_receive(:format_for).once.with(@format)
-      diff().format_as(@format)
+      diff.format_as(@format)
     end
   end
 
@@ -95,7 +97,7 @@ describe Differ::Diff do
         @diff.should == diff(('z' >> 'd'), '*a')
       end
 
-      it "should do nothing to a leading Differ.separator on the insert" do
+      it 'should do nothing to a leading Differ.separator on the insert' do
         @diff = diff('a', ('*-' >> '*+'))
         Differ.separator = '*'
         @diff.same('c')
@@ -119,7 +121,7 @@ describe Differ::Diff do
         @diff.should == diff(-'z*', 'a')
       end
 
-      it "should relocate a leading Differ.separator on the delete to the previous item" do
+      it 'should relocate a leading Differ.separator on the delete to the previous item' do
         @diff = diff('a', -'*b')
         Differ.separator = '*'
         @diff.same('c')
@@ -143,7 +145,7 @@ describe Differ::Diff do
         @diff.should == diff(+'z*', 'a')
       end
 
-      it "should relocate a leading Differ.separator on the insert to the previous item" do
+      it 'should relocate a leading Differ.separator on the insert to the previous item' do
         @diff = diff('a', +'*b')
         Differ.separator = '*'
         @diff.same('c')
@@ -192,12 +194,12 @@ describe Differ::Diff do
           @diff = diff(+'a')
         end
 
-        it "should turn the insert into a change" do
+        it 'should turn the insert into a change' do
           @diff.delete('b')
           @diff.should == diff('b' >> 'a')
         end
 
-        it "should relocate a leading Differ.separator on the insert to the previous item" do
+        it 'should relocate a leading Differ.separator on the insert to the previous item' do
           @diff = diff('a', +'*b')
           Differ.separator = '*'
           @diff.delete('z')
@@ -252,7 +254,7 @@ describe Differ::Diff do
           @diff.should == diff('b' >> 'a')
         end
 
-        it "should relocate a leading Differ.separator on the delete to the previous item" do
+        it 'should relocate a leading Differ.separator on the delete to the previous item' do
           @diff = diff('a', -'*b')
           Differ.separator = '*'
           @diff.insert('z')

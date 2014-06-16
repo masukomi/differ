@@ -21,9 +21,9 @@ describe Differ do
     end
 
     it 'should raise an error on undefined behavior' do
-      lambda {
+      lambda do
         Differ.format = 'threeve'
-      }.should raise_error('Unknown format type "threeve"')
+      end.should raise_error('Unknown format type "threeve"')
     end
   end
 
@@ -31,18 +31,18 @@ describe Differ do
     before(:each) { Differ.format = nil }
 
     it 'should store any callable passed to it' do
-      formatter = ->(c){ c.to_s }
+      formatter = ->(c) { c.to_s }
       Differ.format_for(formatter).should == formatter
     end
 
     it 'should permit nil (default behavior)' do
-      Differ.format_for(nil).should == nil
+      Differ.format_for(nil).should.nil?
     end
 
     it 'should raise an error on undefined behavior' do
-      lambda {
+      lambda do
         Differ.format_for('threeve')
-      }.should raise_error('Unknown format type "threeve"')
+      end.should raise_error('Unknown format type "threeve"')
     end
 
     describe 'when passed a symbol' do
@@ -75,7 +75,7 @@ describe Differ do
     end
 
     it 'should handle prepends' do
-      @to = "myself"
+      @to = 'myself'
       @expected = diff(+'my', 'self')
       diff_by_char.should == @expected
     end
@@ -105,7 +105,7 @@ describe Differ do
     end
 
     it 'should handle simultaneous trailing changes' do
-      @to = "seasoning"
+      @to = 'seasoning'
       @expected = diff('se', ('lf' >> 'asoning'))
       diff_by_char.should == @expected
     end
@@ -151,7 +151,7 @@ describe Differ do
     end
 
     it 'should handle prepends' do
-      @to = "surely the daylight will come"
+      @to = 'surely the daylight will come'
       @expected = diff(+'surely ', 'the daylight will come')
       diff_by_word.should == @expected
     end
@@ -181,7 +181,7 @@ describe Differ do
     end
 
     it 'should handle simultaneous trailing changes' do
-      @to = "the daylight will flood the room"
+      @to = 'the daylight will flood the room'
       @expected = diff('the daylight will ', ('come' >> 'flood the room'))
       diff_by_word.should == @expected
     end
@@ -222,7 +222,7 @@ describe Differ do
         'will ',
         ( 'surely' >> 'become'),
         ' ',
-        ( 'come' >> 'surly' )
+        ( 'come' >> 'surly')
       )
       diff_by_word.should == @expected
     end
@@ -298,7 +298,7 @@ describe Differ do
       HAIKU
       @expected = diff(
         ('stallion sinks gently' >> 'stallion sings gently'),
-        "\nslowly, sleeplessly" <<
+        "\nslowly, sleeplessly" \
         "\nfollowing harp flails"
       )
       diff_by_line.should == @expected
@@ -311,7 +311,7 @@ describe Differ do
         drifting ever on
       HAIKU
       @expected = diff(
-        "stallion sinks gently\n" <<
+        "stallion sinks gently\n" \
         "slowly, sleeplessly\n",
         ('following harp flails' >> 'drifting ever on')
       )
@@ -339,7 +339,7 @@ describe Differ do
       HAIKU
       @expected = diff(
         +"A Haiku, with annotation:\n",
-        "stallion sinks gently\n" <<
+        "stallion sinks gently\n" \
         "slowly, sleeplessly\n",
         +"(flailing)\n",
         'following harp flails',
@@ -359,7 +359,7 @@ describe Differ do
       HAIKU
       @expected = diff(
         -"A Haiku, with annotation:\n",
-        "stallion sinks gently\n" <<
+        "stallion sinks gently\n" \
         "slowly, sleeplessly\n",
         -"(flailing)\n",
         'following harp flails',
@@ -402,13 +402,13 @@ describe Differ do
     end
 
     it 'should handle prepends' do
-      @to = "aberration, alteration, asymmetry, a deviation"
+      @to = 'aberration, alteration, asymmetry, a deviation'
       @expected = diff(+'aberration, ', 'alteration, asymmetry, a deviation')
       diff_by_comma.should == @expected
     end
 
     it 'should handle appends' do
-      @to = "alteration, asymmetry, a deviation, change"
+      @to = 'alteration, asymmetry, a deviation, change'
       @expected = diff('alteration, asymmetry, a deviation', +', change')
       diff_by_comma.should == @expected
     end
