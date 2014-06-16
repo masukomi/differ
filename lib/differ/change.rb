@@ -21,10 +21,10 @@ module Differ
     def to_s
       Differ.format.call(self)
     end
-    alias :inspect :to_s
+    alias_method :inspect, :to_s
 
     def ==(other)
-      self.insert == other.insert && self.delete == other.delete
+      insert == other.insert && delete == other.delete
     end
   end
 end

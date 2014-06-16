@@ -6,7 +6,7 @@ require 'differ/format/html'
 
 module Differ
   class << self
-    @@separator = '';
+    @@separator = ''
 
     def separator=(separator)
       @@separator = separator
@@ -14,10 +14,10 @@ module Differ
 
     def separator
       @@separator
-    end    
+    end
 
     def diff(target, source, new_sep = "\n")
-      old_sep = self.separator
+      old_sep = separator
       self.separator = new_sep
 
       target = target.split(new_sep)
@@ -50,24 +50,24 @@ module Differ
     end
 
     def format
-      return @format || Format::Ascii
+      @format || Format::Ascii
     end
 
     def format_for(f)
       if f.respond_to? :call
         f
-      else       
+      else
         case f
         when :ascii then Format::Ascii
         when :color then Format::Color
         when :html  then Format::HTML
         when nil    then nil
-        else raise "Unknown format type #{f.inspect}"
+        else fail "Unknown format type #{f.inspect}"
         end
       end
     end
 
-  private
+    private
     def advance(target, source)
       del, add = source.shift, target.shift
 

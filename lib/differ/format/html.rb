@@ -9,13 +9,13 @@ module Differ
           ''
         end
 
-      private
+        private
         def as_insert(change)
-          %Q{<ins class="differ">#{change.insert}</ins>}
+          %Q(<ins class="differ">#{change.insert}</ins>)
         end
 
         def as_delete(change)
-          %Q{<del class="differ">#{change.delete}</del>}
+          %Q(<del class="differ">#{change.delete}</del>)
         end
 
         def as_change(change)

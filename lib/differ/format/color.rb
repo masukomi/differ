@@ -9,7 +9,7 @@ module Differ
           ''
         end
 
-      private
+        private
         def as_insert(change)
           "\033[32m#{change.insert}\033[0m"
         end

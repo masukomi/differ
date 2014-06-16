@@ -3,7 +3,7 @@ module Differ
     def diff(old)
       Differ.diff(self, old, Differ.separator || "\n")
     end
-    alias :- :diff
+    alias_method :-, :diff
   end
 end
 

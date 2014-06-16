@@ -40,7 +40,7 @@ module Differ
         end
         change.delete << sep if change.delete?
       else
-        change = Change.new(:delete => @raw.empty? ? '' : sep)
+        change = Change.new(delete: @raw.empty? ? '' : sep)
       end
 
       @raw << change
@@ -56,7 +56,7 @@ module Differ
         end
         change.insert << sep if change.insert?
       else
-        change = Change.new(:insert => @raw.empty? ? '' : sep)
+        change = Change.new(insert: @raw.empty? ? '' : sep)
       end
 
       @raw << change
@@ -68,12 +68,12 @@ module Differ
     end
 
     def to_s
-      @raw.join()
+      @raw.join
     end
 
     def format_as(f)
       f = Differ.format_for(f)
-      @raw.inject('') do |sum, part|
+      @raw.reduce('') do |sum, part|
         part = case part
         when String then part
         when Change then f.call(part)
@@ -98,12 +98,12 @@ module Differ
       @raw.count { |part| Change === part }
     end
 
-  protected
+    protected
     def raw_array
       @raw
     end
 
-  private
+    private
     def sep
       "#{Differ.separator}"
     end

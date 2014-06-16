@@ -9,7 +9,7 @@ module Differ
           ''
         end
 
-      private
+        private
         def as_insert(change)
           "{+#{change.insert.inspect}}"
         end
