@@ -95,7 +95,7 @@ module Differ
     end
 
     def change_count
-      @raw.count { |part| Change === part && part.change? }
+      @raw.count { |part| Change === part }
     end
 
   protected
