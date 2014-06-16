@@ -15,7 +15,7 @@ module Differ
     end
 
     def change?
-      !@insert.empty? && !@delete.empty?
+      insert? && delete?
     end
 
     def to_s
