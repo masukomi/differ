@@ -1,4 +1,4 @@
-# Differ
+# Differ [![Code Climate](https://codeclimate.com/github/emintham/differ.png)](https://codeclimate.com/github/emintham/differ) [![Build Status](https://travis-ci.org/emintham/differ.svg?branch=master)](https://travis-ci.org/emintham/differ)
 
 > As streams of text swirled before the young man's eyes, his mind swam with thoughts of many things. They would have to wait, however, as he focussed his full concentration on the shifting patterns ahead of him. A glint of light reflecting off a piece of buried code caught his eye and any hope he had was lost. For the very moment he glanced aside, the landscape became Different.
 > The young man gave a small sigh and trudged onward in solemn resignation, fated to wander the desolate codebanks in perpetuity.
