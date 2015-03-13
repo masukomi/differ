@@ -1,7 +1,7 @@
 module Differ
   class Diff
-    def initialize
-      @raw = []
+    def initialize(*parts)
+      @raw = parts
     end
 
     def same(*str)
@@ -50,6 +50,7 @@ module Differ
       @raw << change
       @raw.last.send(del_or_insert) << str.join(sep)
     end
+
     def delete(*str)
       delete_or_insert(:delete, str)
     end

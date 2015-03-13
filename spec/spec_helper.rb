@@ -1,14 +1,9 @@
 require 'rubygems'
+#require 'byebug'
 
 $LOAD_PATH.unshift(File.dirname(__FILE__))
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 require 'differ'
-
-def diff(*parts)
-  x = Differ::Diff.new
-  x.instance_variable_set(:@raw, parts)
-  x
-end
 
 class String
   def +@
