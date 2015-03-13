@@ -30,37 +30,32 @@ module Differ
       end
       @raw.last << str.join(sep)
     end
-
-    def delete(*str)
+    
+    def delete_or_insert(del_or_insert, str)
+      # del_or_insert accepts :delete or :insert
       return if str.empty?
-      if @raw.last.is_a? Change
+      opposite = del_or_insert == :delete ? :insert : :delete
+      question = "#{del_or_insert}?".to_sym
+      opposite_question = "#{opposite}?".to_sym
+      if (@raw.last.is_a? Change)
         change = @raw.pop
-        if change.insert? && @raw.last
-          @raw.last << sep if change.insert.sub!(/^#{Regexp.quote(sep)}/, '')
+        if change.send(opposite_question) && @raw.last
+          @raw.last << sep if change.send(opposite).sub!(/^#{Regexp.quote(sep)}/, '')
         end
-        change.delete << sep if change.delete?
-      else
-        change = Change.new(delete: @raw.empty? ? '' : sep)
-      end
+        change.send(del_or_insert) << sep if change.send(question)
 
+      else
+        change = Change.new(del_or_insert =>( @raw.empty? ? '' : sep))
+      end
       @raw << change
-      @raw.last.delete << str.join(sep)
+      @raw.last.send(del_or_insert) << str.join(sep)
+    end
+    def delete(*str)
+      delete_or_insert(:delete, str)
     end
 
     def insert(*str)
-      return if str.empty?
-      if @raw.last.is_a? Change
-        change = @raw.pop
-        if change.delete? && @raw.last
-          @raw.last << sep if change.delete.sub!(/^#{Regexp.quote(sep)}/, '')
-        end
-        change.insert << sep if change.insert?
-      else
-        change = Change.new(insert: @raw.empty? ? '' : sep)
-      end
-
-      @raw << change
-      @raw.last.insert << str.join(sep)
+      delete_or_insert(:insert, str)
     end
 
     def ==(other)
