@@ -12,26 +12,26 @@ describe Differ::Diff do
     end
 
     it 'should concatenate the result list' do
-      diff('a', 'b', 'c').to_s.should == 'abc'
+      expect(diff('a', 'b', 'c').to_s).to eq('abc')
     end
 
     it 'should concatenate without regard for the Differ.separator' do
       Differ.separator = '*'
-      diff('a', 'b', 'c').to_s.should == 'abc'
+      expect(diff('a', 'b', 'c').to_s).to eq('abc')
     end
 
     it 'should delegate insertion changes to Differ#format' do
       pending("Don't know expectation incantation for working with attr_accessor")
       
-      i = +'b'
+      i = +'b' # <== WTF is this?
       expect(@format).to(receive(:call).once.with(i).and_return('!'))
-      diff('a', i, 'c').to_s.should == 'a!c'
+      expect(diff('a', i, 'c').to_s).to eq('a!c')
     end
   end
 
   describe '#format_as' do
     before(:each) do
-      @change = +'b'
+      @change = +'b' # <== and WTF this?!
       Differ.format = Module.new { def self.call(_c)
                                      fail :error
                                    end }
@@ -41,7 +41,7 @@ describe Differ::Diff do
     it 'should delegate change formatting to the given format' do
       pending("Don't know expectation incantation for working with attr_accessor")
       expect(@format).to(receive(:call).once.with(@change).and_return('!'))
-      diff('a', @change, 'c').format_as(@format).should == 'a!c'
+      expect(diff('a', @change, 'c').format_as(@format)).to eq('a!c')
     end
 
     it 'should use Differ#format_for to grab the correct format' do
@@ -53,18 +53,18 @@ describe Differ::Diff do
   describe '#same' do
     it 'should append to the result list' do
       @diff.same('c')
-      @diff.should == diff('c')
+      expect(@diff).to eq(diff('c'))
     end
 
     it 'should concatenate its arguments' do
       @diff.same('a', 'b', 'c', 'd')
-      @diff.should == diff('abcd')
+      expect(@diff).to eq(diff('abcd'))
     end
 
     it 'should join its arguments with Differ.separator' do
       Differ.separator = '*'
       @diff.same(*'a*b*c*d'.split)
-      @diff.should == diff('a*b*c*d')
+      expect(@diff).to eq(diff('a*b*c*d'))
     end
 
     describe 'when the last result was a String' do
@@ -74,13 +74,13 @@ describe Differ::Diff do
 
       it 'should append to the last result' do
         @diff.same('b')
-        @diff.should == diff('ab')
+        expect(@diff).to eq(diff('ab'))
       end
 
       it 'should join to the last result with Differ.separator' do
         Differ.separator = '*'
         @diff.same('b')
-        @diff.should == diff('a*b')
+        expect(@diff).to eq(diff('a*b'))
       end
     end
 
@@ -91,20 +91,20 @@ describe Differ::Diff do
 
       it 'should append to the result list' do
         @diff.same('a')
-        @diff.should == diff(('z' >> 'd'), 'a')
+        expect(@diff).to eq(diff(('z' >> 'd'), 'a'))
       end
 
       it 'should prepend Differ.separator to the result' do
         Differ.separator = '*'
         @diff.same('a')
-        @diff.should == diff(('z' >> 'd'), '*a')
+        expect(@diff).to eq(diff(('z' >> 'd'), '*a'))
       end
 
       it 'should do nothing to a leading Differ.separator on the insert' do
         @diff = diff('a', ('*-' >> '*+'))
         Differ.separator = '*'
         @diff.same('c')
-        @diff.should == diff('a', ('*-' >> '*+'), '*c')
+        expect(@diff).to eq(diff('a', ('*-' >> '*+'), '*c'))
       end
     end
 
@@ -115,20 +115,20 @@ describe Differ::Diff do
 
       it 'should append to the result list' do
         @diff.same('a')
-        @diff.should == diff(-'z', 'a')
+        expect(@diff).to eq(diff(-'z', 'a'))
       end
 
       it 'should append Differ.separator to the previous result' do
         Differ.separator = '*'
         @diff.same('a')
-        @diff.should == diff(-'z*', 'a')
+        expect(@diff).to eq(diff(-'z*', 'a'))
       end
 
       it 'should relocate a leading Differ.separator on the delete to the previous item' do
         @diff = diff('a', -'*b')
         Differ.separator = '*'
         @diff.same('c')
-        @diff.should == diff('a*', -'b*', 'c')
+        expect(@diff).to eq(diff('a*', -'b*', 'c'))
       end
     end
 
@@ -139,20 +139,20 @@ describe Differ::Diff do
 
       it 'should append to the result list' do
         @diff.same('a')
-        @diff.should == diff(+'z', 'a')
+        expect(@diff).to eq(diff(+'z', 'a'))
       end
 
       it 'should append Differ.separator to the previous result' do
         Differ.separator = '*'
         @diff.same('a')
-        @diff.should == diff(+'z*', 'a')
+        expect(@diff).to eq(diff(+'z*', 'a'))
       end
 
       it 'should relocate a leading Differ.separator on the insert to the previous item' do
         @diff = diff('a', +'*b')
         Differ.separator = '*'
         @diff.same('c')
-        @diff.should == diff('a*', +'b*', 'c')
+        expect(@diff).to eq(diff('a*', +'b*', 'c'))
       end
     end
   end
@@ -160,18 +160,18 @@ describe Differ::Diff do
   describe '#delete' do
     it 'should append to the result list' do
       @diff.delete('c')
-      @diff.should == diff(-'c')
+      expect(@diff).to eq(diff(-'c'))
     end
 
     it 'should concatenate its arguments' do
       @diff.delete('a', 'b', 'c', 'd')
-      @diff.should == diff(-'abcd')
+      expect(@diff).to eq(diff(-'abcd'))
     end
 
     it 'should join its arguments with Differ.separator' do
       Differ.separator = '*'
       @diff.delete(*'a*b*c*d'.split)
-      @diff.should == diff(-'a*b*c*d')
+      expect(@diff).to eq(diff(-'a*b*c*d'))
     end
 
     describe 'when the last result was a Change' do
@@ -182,13 +182,13 @@ describe Differ::Diff do
 
         it 'should append to the last result' do
           @diff.delete('b')
-          @diff.should == diff(-'ab')
+          expect(@diff).to eq(diff(-'ab'))
         end
 
         it 'should join to the last result with Differ.separator' do
           Differ.separator = '*'
           @diff.delete('b')
-          @diff.should == diff(-'a*b')
+          expect(@diff).to eq(diff(-'a*b'))
         end
       end
 
@@ -199,14 +199,14 @@ describe Differ::Diff do
 
         it 'should turn the insert into a change' do
           @diff.delete('b')
-          @diff.should == diff('b' >> 'a')
+          expect(@diff).to eq(diff('b' >> 'a'))
         end
 
         it 'should relocate a leading Differ.separator on the insert to the previous item' do
           @diff = diff('a', +'*b')
           Differ.separator = '*'
           @diff.delete('z')
-          @diff.should == diff('a*', ('z' >> 'b'))
+          expect(@diff).to eq(diff('a*', ('z' >> 'b')))
         end
       end
     end
@@ -218,13 +218,13 @@ describe Differ::Diff do
 
       it 'should append a Change to the result list' do
         @diff.delete('b')
-        @diff.should == diff('a', -'b')
+        expect(@diff).to eq(diff('a', -'b'))
       end
 
       it 'should prepend Differ.separator to the result' do
         Differ.separator = '*'
         @diff.delete('b')
-        @diff.should == diff('a', -'*b')
+        expect(@diff).to eq(diff('a', -'*b'))
       end
     end
   end
@@ -232,18 +232,18 @@ describe Differ::Diff do
   describe '#insert' do
     it 'should append to the result list' do
       @diff.insert('c')
-      @diff.should == diff(+'c')
+      expect(@diff).to eq(diff(+'c'))
     end
 
     it 'should concatenate its arguments' do
       @diff.insert('a', 'b', 'c', 'd')
-      @diff.should == diff(+'abcd')
+      expect(@diff).to eq(diff(+'abcd'))
     end
 
     it 'should join its arguments with Differ.separator' do
       Differ.separator = '*'
       @diff.insert(*'a*b*c*d'.split)
-      @diff.should == diff(+'a*b*c*d')
+      expect(@diff).to eq(diff(+'a*b*c*d'))
     end
 
     describe 'when the last result was a Change' do
@@ -254,14 +254,14 @@ describe Differ::Diff do
 
         it "should not change the 'insert' portion of the last result" do
           @diff.insert('a')
-          @diff.should == diff('b' >> 'a')
+          expect(@diff).to eq(diff('b' >> 'a'))
         end
 
         it 'should relocate a leading Differ.separator on the delete to the previous item' do
           @diff = diff('a', -'*b')
           Differ.separator = '*'
           @diff.insert('z')
-          @diff.should == diff('a*', ('b' >> 'z'))
+          expect(@diff).to eq(diff('a*', ('b' >> 'z')))
         end
       end
 
@@ -272,13 +272,13 @@ describe Differ::Diff do
 
         it 'should append to the last result' do
           @diff.insert('b')
-          @diff.should == diff(+'ab')
+          expect(@diff).to eq(diff(+'ab'))
         end
 
         it 'should join to the last result with Differ.separator' do
           Differ.separator = '*'
           @diff.insert('b')
-          @diff.should == diff(+'a*b')
+          expect(@diff).to eq(diff(+'a*b'))
         end
       end
     end
@@ -290,13 +290,13 @@ describe Differ::Diff do
 
       it 'should append a Change to the result list' do
         @diff.insert('b')
-        @diff.should == diff('a', +'b')
+        expect(@diff).to eq(diff('a', +'b'))
       end
 
       it 'should prepend Differ.separator to the result' do
         Differ.separator = '*'
         @diff.insert('b')
-        @diff.should == diff('a', +'*b')
+        expect(@diff).to eq(diff('a', +'*b'))
       end
     end
   end
