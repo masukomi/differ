@@ -14,6 +14,23 @@ module Differ
       !@delete.empty?
     end
 
+    def has_opposite_of?(delete_or_insert)
+      if delete_or_insert == :delete
+        self.insert?
+      else
+        self.delete?
+      end
+    end
+
+    def opposite_of(delete_or_insert)
+      if delete_or_insert == :delete
+        @insert
+      else
+        @delete
+      end
+
+    end
+
     def change?
       insert? && delete?
     end

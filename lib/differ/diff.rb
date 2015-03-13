@@ -4,6 +4,10 @@ module Differ
       @raw = parts
     end
 
+    def append_to_last(x)
+      @raw.last << x
+    end
+
     def same(*str)
       return if str.empty?
       if @raw.last.is_a? String
@@ -12,44 +16,19 @@ module Differ
         if @raw.last.change?
           @raw << sep
         else
-          change = @raw.pop
-          if change.insert? && @raw.last
-            @raw.last << sep if change.insert.sub!(/^#{Regexp.quote(sep)}/, '')
-          end
-          if change.delete? && @raw.last
-            @raw.last << sep if change.delete.sub!(/^#{Regexp.quote(sep)}/, '')
-          end
-          @raw << change
-
-          @raw.last.insert << sep if @raw.last.insert?
-          @raw.last.delete << sep if @raw.last.delete?
-          @raw << ''
+          del_or_insert = @raw.last.insert? ? :insert : :delete
+          opposite_del_or_insert = del_or_insert == :insert ? :delete : :insert
+          change = update_last_change(opposite_del_or_insert)
+          append_change(change, del_or_insert)
         end
       else
         @raw << ''
       end
       @raw.last << str.join(sep)
     end
-    
-    def delete_or_insert(del_or_insert, str)
-      # del_or_insert accepts :delete or :insert
-      return if str.empty?
-      opposite = del_or_insert == :delete ? :insert : :delete
-      question = "#{del_or_insert}?".to_sym
-      opposite_question = "#{opposite}?".to_sym
-      if (@raw.last.is_a? Change)
-        change = @raw.pop
-        if change.send(opposite_question) && @raw.last
-          @raw.last << sep if change.send(opposite).sub!(/^#{Regexp.quote(sep)}/, '')
-        end
-        change.send(del_or_insert) << sep if change.send(question)
 
-      else
-        change = Change.new(del_or_insert =>( @raw.empty? ? '' : sep))
-      end
-      @raw << change
-      @raw.last.send(del_or_insert) << str.join(sep)
-    end
+
+    
 
     def delete(*str)
       delete_or_insert(:delete, str)
@@ -103,5 +82,51 @@ module Differ
     def sep
       "#{Differ.separator}"
     end
+
+    #TODO: 
+    # I've removed the dupe code. 
+    # Now this needs to be simplified.
+    def delete_or_insert(del_or_insert, str)
+      # del_or_insert accepts :delete or :insert
+      return if str.empty?
+
+      if (@raw.last.is_a? Change)
+        change = update_last_change(del_or_insert)
+
+      else # it's either a string, or nil
+        change = Change.new(del_or_insert =>( @raw.empty? ? '' : sep))
+      end
+      append_change(change, del_or_insert, str)
+    end
+
+
+    def append_change(change, del_or_insert, str = nil)
+      @raw << change
+      if ! str.nil?
+        @raw.last.send(del_or_insert) << str.join(sep)
+      else
+        @raw.last.send(del_or_insert) << sep
+        @raw << ''
+      end
+    end
+
+        
+    def update_last_change(del_or_insert)
+      # this was extracted from #delete_or_insert
+      # but it's the same code as #same used
+      # only with the :insert / :delete flipped
+      question = "#{del_or_insert}?".to_sym
+      # remove the last item from the @raw
+      # so that we can tweak it.
+      change = @raw.pop
+      if change.has_opposite_of?(del_or_insert) && @raw.last
+        opposite_val = change.opposite_of(del_or_insert)
+        replacement_made = opposite_val.sub!(/^#{Regexp.quote(sep)}/, '')
+        @raw.last << sep if replacement_made
+      end
+      change.send(del_or_insert) << sep if change.send(question)
+      change
+    end
+
   end
 end
