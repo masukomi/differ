@@ -26,7 +26,7 @@ module Differ
       self.separator = '' if new_sep.is_a? Regexp
 
       @diff = Diff.new
-      advance(target, source) until source.empty? || target.empty?
+      advance(source, target) until source.empty? || target.empty?
       @diff.insert(*target) || @diff.delete(*source)
       return @diff
     ensure
@@ -68,7 +68,7 @@ module Differ
     end
 
     private
-    def advance(target, source)
+    def advance(source, target)
       del, add = source.shift, target.shift
 
       prioritize_insert = target.length > source.length
