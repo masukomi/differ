@@ -69,25 +69,44 @@ module Differ
 
     private
     def advance(source, target)
-      del, add = source.shift, target.shift
+      # items moving from source -> target
+
+      # shift the first thing off
+      first_source_item, first_target_item = source.shift, target.shift
 
       prioritize_insert = target.length > source.length
-      insert = target.index(del)
-      delete = source.index(add)
 
-      if del == add
-        @diff.same(add)
-      elsif insert && prioritize_insert
-        change(:insert, target.unshift(add), insert)
-      elsif delete
-        change(:delete, source.unshift(del), delete)
-      elsif insert && !prioritize_insert
-        change(:insert, target.unshift(add), insert)
+      insertion_idx = target.index(first_source_item)
+      # does the first_source_item
+      # exist in the target still?
+      deletion_idx = source.index(first_target_item)
+      # did the first_target_item
+      # exist in the source
+
+
+      if first_source_item == first_target_item
+        @diff.same(first_target_item)
+      elsif insertion_idx && prioritize_insert #see note below
+        insert(target.unshift(first_target_item), insertion_idx)
+      elsif deletion_idx
+        delete(source.unshift(first_source_item), deletion_idx)
+      elsif insertion_idx && !prioritize_insert # see note below
+        insert(target.unshift(first_target_item), insertion_idx)
       else
-        @diff.insert(add) && @diff.delete(del)
+        @diff.insert(first_target_item) && @diff.delete(first_source_item)
       end
+      # It looks like both of the inserts above could be combined.
+      # They can't. They also can't be reordered.
+      # The reason is that sometimes the deletion_idx and insertion_idx
+      # are both non-nil
     end
 
+    def insert(array, index)
+      change(:insert, array, index)
+    end
+    def delete(array, index)
+      change(:delete, array, index)
+    end
     def change(method, array, index)
       @diff.send(method, *array.slice!(0..index))
       @diff.same(array.shift)
