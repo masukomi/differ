@@ -6,9 +6,14 @@ require 'differ/version'
 Gem::Specification.new do |spec|
   spec.name          = 'differ'
   spec.version       = Differ::VERSION
-  spec.authors       = ['Pieter van de Bruggen', 'Jonas Schubert Erlandsson', 'Jakob Rath', 'Emin Tham']
+  spec.authors       = ['Pieter van de Bruggen', 
+                        'Jonas Schubert Erlandsson', 
+                        'Jakob Rath', 'Emin Tham',
+                        'masukomi']
   spec.date          = %q{2011-02-17}
-  spec.email         = ['pvande@gmail.com', 'jonas.schubert.erlandsson@my-codeworks.com']
+  spec.email         = ['pvande@gmail.com', 
+                        'jonas.schubert.erlandsson@my-codeworks.com',
+                        'masukomi@masukomi.org']
   spec.description   = 'A simple gem for generating string diffs'
   spec.summary       = 'A simple gem for generating string diffs'
   spec.homepage      = 'http://github.com/pvande/differ'
