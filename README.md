@@ -1,4 +1,4 @@
-# Differ [![Code Climate](https://codeclimate.com/github/masukomi/differ.png)](https://codeclimate.com/github/emintham/differ) [![Build Status](https://travis-ci.org/masukomi/differ.svg?branch=master)](https://travis-ci.org/emintham/differ)
+# Differ [![Code Climate](https://codeclimate.com/github/masukomi/differ.png)](https://codeclimate.com/github/emintham/differ) [![Build Status](https://travis-ci.org/masukomi/differ.svg?branch=master)](https://travis-ci.org/emintham/differ) [![Test Coverage](https://codeclimate.com/github/masukomi/differ/badges/coverage.svg)](https://codeclimate.com/github/masukomi/differ)
 
 Originally by [pvande](https://github.com/pvande/differ), then forked by [JakobR](https://github.com/JakobR/differ/tree/jr) then forked by [emintham](https://github.com/emintham)
 
