@@ -3,10 +3,15 @@ module Differ
     module Color
       class << self
         def call(change)
-          (change.change? && as_change(change)) ||
-          (change.delete? && as_delete(change)) ||
-          (change.insert? && as_insert(change)) ||
-          ''
+          if change.change?
+            as_change(change)
+          elsif change.delete?
+            as_delete(change)
+          elsif change.insert?
+            as_insert(change)
+          else
+            ''
+          end
         end
 
         private
