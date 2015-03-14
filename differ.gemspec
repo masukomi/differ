@@ -12,7 +12,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'A simple gem for generating string diffs'
   spec.summary       = 'A simple gem for generating string diffs'
   spec.homepage      = 'http://github.com/pvande/differ'
-  spec.license       = 'MIT'
+  spec.license       = 'GIFT v1'
 
   spec.files         = `git ls-files`.split($/)
   spec.executables   = spec.files.grep(%r{^bin/}) { |f| File.basename(f) }
