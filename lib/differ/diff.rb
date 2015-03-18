@@ -12,6 +12,7 @@ module Differ
       return if str.empty?
       if @raw.last.is_a? String
         @raw.last << sep
+        # we'll append the contents of the string below
       elsif @raw.last.is_a? Change
         if @raw.last.change?
           @raw << sep
@@ -28,7 +29,7 @@ module Differ
     end
 
 
-    
+
 
     def delete(*str)
       delete_or_insert(:delete, str)
@@ -73,7 +74,6 @@ module Differ
       @raw.count { |part| Change === part }
     end
 
-    protected
     def raw_array
       @raw
     end
@@ -83,8 +83,8 @@ module Differ
       "#{Differ.separator}"
     end
 
-    #TODO: 
-    # I've removed the dupe code. 
+    #TODO:
+    # I've removed the dupe code.
     # Now this needs to be simplified.
     def delete_or_insert(del_or_insert, str)
       # del_or_insert accepts :delete or :insert
@@ -110,7 +110,7 @@ module Differ
       end
     end
 
-        
+
     def update_last_change(del_or_insert)
       # this was extracted from #delete_or_insert
       # but it's the same code as #same used
