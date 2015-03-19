@@ -10,6 +10,12 @@ module Differ
 
     def same(*str)
       return if str.empty?
+      # the items in the @raw array are strings and/or
+      # changes. If the last one is a string (not a change),
+      # and the item we've just encountered is another
+      # unchanged string, we just want to append this string
+      # to the one we left off with.
+
       if @raw.last.is_a? String
         @raw.last << sep
         # we'll append the contents of the string below
@@ -23,6 +29,7 @@ module Differ
           append_change(change, del_or_insert)
         end
       else
+        # we need a string to append the incoming sameness to
         @raw << ''
       end
       @raw.last << str.join(sep)
