@@ -51,6 +51,9 @@ describe Differ::Diff do
   end
 
   describe '#same' do
+    before(:each) do
+      Differ.format = Differ::Format::Ascii
+    end
     it 'should append to the result list' do
       @diff.same('c')
       expect(@diff).to eq(Differ::Diff.new('c'))
@@ -86,25 +89,30 @@ describe Differ::Diff do
 
     describe 'when the last result was a change' do
       before(:each) do
-        @diff = Differ::Diff.new('z' >> 'd')
+        @diff = Differ::Diff.new(
+          Differ::Change.new(delete: 'z', insert: 'd'))
       end
 
       it 'should append to the result list' do
         @diff.same('a')
-        expect(@diff).to eq(Differ::Diff.new(('z' >> 'd'), 'a'))
+        expect(@diff).to eq(Differ::Diff.new(
+          Differ::Change.new(delete: 'z', insert: 'd'), 'a'))
       end
 
       it 'should prepend Differ.separator to the result' do
         Differ.separator = '*'
         @diff.same('a')
-        expect(@diff).to eq(Differ::Diff.new(('z' >> 'd'), '*a'))
+        expect(@diff).to eq(Differ::Diff.new(
+          Differ::Change.new(delete: 'z', insert: 'd'), '*a'))
       end
 
       it 'should do nothing to a leading Differ.separator on the insert' do
-        @diff = Differ::Diff.new('a', ('*-' >> '*+'))
+        @diff = Differ::Diff.new('a',
+          Differ::Change.new(delete: '*-', insert:'*+'))
         Differ.separator = '*'
         @diff.same('c')
-        expect(@diff).to eq(Differ::Diff.new('a', ('*-' >> '*+'), '*c'))
+        expect(@diff).to eq(Differ::Diff.new('a',
+          Differ::Change.new(delete: '*-', insert:'*+'), '*c'))
       end
     end
 
@@ -199,14 +207,16 @@ describe Differ::Diff do
 
         it 'should turn the insert into a change' do
           @diff.delete('b')
-          expect(@diff).to eq(Differ::Diff.new('b' >> 'a'))
+          expect(@diff).to eq(Differ::Diff.new(
+            Differ::Change.new(delete: 'b', insert: 'a')))
         end
 
         it 'should relocate a leading Differ.separator on the insert to the previous item' do
           @diff = Differ::Diff.new('a', +'*b')
           Differ.separator = '*'
           @diff.delete('z')
-          expect(@diff).to eq(Differ::Diff.new('a*', ('z' >> 'b')))
+          expect(@diff).to eq(Differ::Diff.new('a*',
+              Differ::Change.new(delete: 'z', insert: 'b')))
         end
       end
     end
@@ -254,14 +264,17 @@ describe Differ::Diff do
 
         it "should not change the 'insert' portion of the last result" do
           @diff.insert('a')
-          expect(@diff).to eq(Differ::Diff.new('b' >> 'a'))
+          expect(@diff).to eq(
+            Differ::Diff.new(
+              Differ::Change.new(delete: 'b', insert: 'a')))
         end
 
         it 'should relocate a leading Differ.separator on the delete to the previous item' do
           @diff = Differ::Diff.new('a', -'*b')
           Differ.separator = '*'
           @diff.insert('z')
-          expect(@diff).to eq(Differ::Diff.new('a*', ('b' >> 'z')))
+          expect(@diff).to eq(Differ::Diff.new('a*',
+             Differ::Change.new(delete: 'b', insert: 'z')))
         end
       end
 
@@ -309,14 +322,21 @@ describe Differ::Diff do
     it 'should be usable as a separator' do
       # splitting on the first letter preceding an i (and the i)
       # then discarding it because it was a non-captured separator
-      expect(Differ.diff(a, b, /[a-z]i/).to_s).to(
-        eq('E{"c wolfman f" >> "c lolcat f"}l!'))
+      expect(Differ.diff(b, a, /[a-z]i/).to_s).to(
+        eq('E{"c lolcat f" >> "c wolfman f"}l!'))
     end
 
     it 'should support capturing groups when used as a separator' do
       # ditto, but this time we're capturing the separator
-      expect(Differ.diff(a, b, /([a-z]i)/).to_s).to(
-        eq('Epi{"c wolfman f" >> "c lolcat f"}ail!'))
+      expect(Differ.diff(b, a, /([a-z]i)/).to_s).to(
+        eq('Epi{"c lolcat f" >> "c wolfman f"}ail!'))
+    end
+
+    it 'should not throw anything out' do
+      c = "this is\nthe dawning of\nthe age of Aquarius!"
+      d = "this is\nthe dawning of\nthe age of the machines!"
+      expect(Differ.diff(d, c, /([\n ])/).to_s).to(
+        eq("this is\nthe dawning of\nthe age of {\"Aquarius!\" >> \"the machines!\"}"))
     end
   end
 end
