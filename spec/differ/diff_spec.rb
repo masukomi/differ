@@ -22,7 +22,7 @@ describe Differ::Diff do
 
     it 'should delegate insertion changes to Differ#format' do
       pending("Don't know expectation incantation for working with attr_accessor")
-      
+
       i = +'b' # <== WTF is this?
       expect(@format).to(receive(:call).once.with(i).and_return('!'))
       expect(Differ::Diff.new('a', i, 'c').to_s).to eq('a!c')
@@ -298,6 +298,25 @@ describe Differ::Diff do
         @diff.insert('b')
         expect(@diff).to eq(Differ::Diff.new('a', +'*b'))
       end
+    end
+  end
+  describe 'regex' do
+    before(:each){
+      Differ.format = Differ::Format::Ascii
+    }
+    let(:a) { "Epic lolcat fail!"}
+    let(:b) { "Epic wolfman fail!"}
+    it 'should be usable as a separator' do
+      # splitting on the first letter preceding an i (and the i)
+      # then discarding it because it was a non-captured separator
+      expect(Differ.diff(a, b, /[a-z]i/).to_s).to(
+        eq('E{"c wolfman f" >> "c lolcat f"}l!'))
+    end
+
+    it 'should support capturing groups when used as a separator' do
+      # ditto, but this time we're capturing the separator
+      expect(Differ.diff(a, b, /([a-z]i)/).to_s).to(
+        eq('Epi{"c wolfman f" >> "c lolcat f"}ail!'))
     end
   end
 end
